@@ -29,17 +29,25 @@ opt.on('-l') { |v| params[:l] = v }
 
 opt.parse!(ARGV)
 
-pattern = if ARGV.empty?
-            '*'
-            # TODO: basic input in wc?
-          else
-            ARGV
-              .map { |arg| directory_or_file(arg) }
-              .compact
-              .map { |file| "#{file}*" }
-          end
+is_args = ARGV.empty?
+TEMP_FILE_NAME = "temp_file_#{Time.now.to_i}.txt"
 
-files = Dir.glob(pattern).sort
+files = if is_args
+          lines = readlines
+
+          file = File.open(TEMP_FILE_NAME, 'w')
+          file.puts(lines)
+          file.close
+
+          [file]
+        else
+          pattern = ARGV
+                      .map { |arg| directory_or_file(arg) }
+                      .compact
+                      .map { |file| "#{file}*" }
+
+          Dir.glob(pattern).sort
+        end
 
 BASE_PADDING = 8
 
@@ -68,5 +76,9 @@ files.each do |f|
     print byte.to_s.rjust(byte_padding)
   end
 
-  puts " #{file.to_path}"
+  puts is_args ? '' : " #{file.to_path}"
+end
+
+if is_args
+  File.delete(TEMP_FILE_NAME)
 end
