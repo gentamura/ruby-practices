@@ -57,7 +57,7 @@ files = if is_standard_inputs
         else
           pattern = ARGV.map { |arg| directory_or_file(arg) }.compact.map { |f| "#{f}*" }
 
-          Dir.glob(pattern).sort
+          Dir.glob(pattern)
         end
 
 total = {
