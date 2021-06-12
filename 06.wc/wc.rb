@@ -21,6 +21,20 @@ def directory_or_file(name)
   end
 end
 
+BASE_PADDING = 8
+
+def paddings(line, word, byte)
+  line_len = line.to_s.length
+  word_len = word.to_s.length
+  byte_len = byte.to_s.length
+
+  line_padding = line_len > BASE_PADDING ? line_len + 1 : BASE_PADDING
+  word_padding = word_len > BASE_PADDING ? word_len + 1 : BASE_PADDING
+  byte_padding = byte_len > BASE_PADDING ? byte_len + 1 : BASE_PADDING
+
+  [line_padding, word_padding, byte_padding]
+end
+
 opt = OptionParser.new
 
 params = {}
@@ -49,7 +63,22 @@ files = if is_args
           Dir.glob(pattern).sort
         end
 
-BASE_PADDING = 8
+total = {
+  line: {
+    value: 0,
+    padding: 0
+  },
+  word: {
+    value: 0,
+    padding: 0
+  },
+  byte: {
+    value: 0,
+    padding: 0
+  }
+}
+
+is_total_view = files.length > 1
 
 files.each do |f|
   file = File.new(f)
@@ -60,13 +89,7 @@ files.each do |f|
 
   byte = file.size # byte
 
-  line_len = line.to_s.length
-  word_len = word.to_s.length
-  byte_len = byte.to_s.length
-
-  line_padding = line_len > BASE_PADDING ? line_len + 1 : BASE_PADDING
-  word_padding = word_len > BASE_PADDING ? word_len + 1 : BASE_PADDING
-  byte_padding = byte_len > BASE_PADDING ? byte_len + 1 : BASE_PADDING
+  line_padding, word_padding, byte_padding = paddings(line, word, byte)
 
   if params[:l]
     print line.to_s.rjust(line_padding)
@@ -77,6 +100,31 @@ files.each do |f|
   end
 
   puts is_args ? '' : " #{file.to_path}"
+
+  # Prepare for total view
+  if is_total_view
+    total[:line][:value] += line
+    total[:word][:value] += word
+    total[:byte][:value] += byte
+
+    total_line_padding, total_word_padding, total_byte_padding = paddings(total[:line][:value], total[:word][:value], total[:byte][:value])
+
+    total[:line][:padding] = total_line_padding
+    total[:word][:padding] = total_word_padding
+    total[:byte][:padding] = total_byte_padding
+  end
+end
+
+if is_total_view
+  if params[:l]
+    print total[:line][:value].to_s.rjust(total[:line][:padding])
+  else
+    print total[:line][:value].to_s.rjust(total[:line][:padding])
+    print total[:word][:value].to_s.rjust(total[:word][:padding])
+    print total[:byte][:value].to_s.rjust(total[:byte][:padding])
+  end
+
+  puts " total"
 end
 
 if is_args
