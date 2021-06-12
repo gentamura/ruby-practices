@@ -55,10 +55,7 @@ files = if is_standard_inputs
 
           [file]
         else
-          pattern = ARGV
-                      .map { |arg| directory_or_file(arg) }
-                      .compact
-                      .map { |file| "#{file}*" }
+          pattern = ARGV.map { |arg| directory_or_file(arg) }.compact.map { |f| "#{f}*" }
 
           Dir.glob(pattern).sort
         end
@@ -91,10 +88,9 @@ files.each do |f|
 
   line_padding, word_padding, byte_padding = paddings(line, word, byte)
 
-  if params[:l]
-    print line.to_s.rjust(line_padding)
-  else
-    print line.to_s.rjust(line_padding)
+  print line.to_s.rjust(line_padding)
+
+  unless params[:l]
     print word.to_s.rjust(word_padding)
     print byte.to_s.rjust(byte_padding)
   end
@@ -102,31 +98,28 @@ files.each do |f|
   puts is_standard_inputs ? '' : " #{file.to_path}"
 
   # Prepare for total view
-  if is_total_view
-    total[:line][:value] += line
-    total[:word][:value] += word
-    total[:byte][:value] += byte
+  next unless is_total_view
 
-    total_line_padding, total_word_padding, total_byte_padding = paddings(total[:line][:value], total[:word][:value], total[:byte][:value])
+  total[:line][:value] += line
+  total[:word][:value] += word
+  total[:byte][:value] += byte
 
-    total[:line][:padding] = total_line_padding
-    total[:word][:padding] = total_word_padding
-    total[:byte][:padding] = total_byte_padding
-  end
+  total_line_padding, total_word_padding, total_byte_padding = paddings(total[:line][:value], total[:word][:value], total[:byte][:value])
+
+  total[:line][:padding] = total_line_padding
+  total[:word][:padding] = total_word_padding
+  total[:byte][:padding] = total_byte_padding
 end
 
 if is_total_view
-  if params[:l]
-    print total[:line][:value].to_s.rjust(total[:line][:padding])
-  else
-    print total[:line][:value].to_s.rjust(total[:line][:padding])
+  print total[:line][:value].to_s.rjust(total[:line][:padding])
+
+  unless params[:l]
     print total[:word][:value].to_s.rjust(total[:word][:padding])
     print total[:byte][:value].to_s.rjust(total[:byte][:padding])
   end
 
-  puts " total"
+  puts ' total'
 end
 
-if is_standard_inputs
-  File.delete(TEMP_FILE_NAME)
-end
+File.delete(TEMP_FILE_NAME) if is_standard_inputs
