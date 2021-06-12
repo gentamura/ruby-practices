@@ -43,10 +43,10 @@ opt.on('-l') { |v| params[:l] = v }
 
 opt.parse!(ARGV)
 
-is_args = ARGV.empty?
+is_standard_inputs = ARGV.empty?
 TEMP_FILE_NAME = "temp_file_#{Time.now.to_i}.txt"
 
-files = if is_args
+files = if is_standard_inputs
           lines = readlines
 
           file = File.open(TEMP_FILE_NAME, 'w')
@@ -99,7 +99,7 @@ files.each do |f|
     print byte.to_s.rjust(byte_padding)
   end
 
-  puts is_args ? '' : " #{file.to_path}"
+  puts is_standard_inputs ? '' : " #{file.to_path}"
 
   # Prepare for total view
   if is_total_view
@@ -127,6 +127,6 @@ if is_total_view
   puts " total"
 end
 
-if is_args
+if is_standard_inputs
   File.delete(TEMP_FILE_NAME)
 end
