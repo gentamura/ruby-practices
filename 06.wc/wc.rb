@@ -60,8 +60,13 @@ files.each do |f|
   word_padding = word_len > BASE_PADDING ? word_len + 1 : BASE_PADDING
   byte_padding = byte_len > BASE_PADDING ? byte_len + 1 : BASE_PADDING
 
-  print line.to_s.rjust(line_padding)
-  print word.to_s.rjust(word_padding)
-  print byte.to_s.rjust(byte_padding)
+  if params[:l]
+    print line.to_s.rjust(line_padding)
+  else
+    print line.to_s.rjust(line_padding)
+    print word.to_s.rjust(word_padding)
+    print byte.to_s.rjust(byte_padding)
+  end
+
   puts " #{file.to_path}"
 end
