@@ -72,14 +72,15 @@ total = {
 
 is_total_view = files.length > 1
 
-files.each do |f|
-  file = File.new(f)
-  line = file.each_line.count # lines
+files.each do |file_or_filename|
+  line, word, byte = nil
 
-  file = File.new(f)
-  word = file.each_line.reduce { |result, s| result << s }.split.count # words
-
-  byte = file.size # byte
+  file = File.open(file_or_filename) do |f|
+    line = f.each_line.count
+    word = f.read.split.count
+    byte = f.size
+    f
+  end
 
   line_padding, word_padding, byte_padding = paddings(line, word, byte)
 
