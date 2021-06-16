@@ -43,9 +43,10 @@ TEMP_FILE_NAME = "temp_file_#{Time.now.to_i}.txt"
 files = if is_standard_inputs
           lines = readlines
 
-          file = File.open(TEMP_FILE_NAME, 'w')
-          file.puts(lines)
-          file.close
+          file = File.open(TEMP_FILE_NAME, 'w') do |f|
+            f.puts(lines)
+            f
+          end
 
           [file]
         else
