@@ -56,18 +56,9 @@ files = if is_standard_inputs
         end
 
 total = {
-  line: {
-    value: 0,
-    padding: 0
-  },
-  word: {
-    value: 0,
-    padding: 0
-  },
-  byte: {
-    value: 0,
-    padding: 0
-  }
+  line: 0,
+  word: 0,
+  byte: 0
 }
 
 is_total_view = files.length > 1
@@ -96,23 +87,19 @@ files.each do |file_or_filename|
   # Prepare for total view
   next unless is_total_view
 
-  total[:line][:value] += line
-  total[:word][:value] += word
-  total[:byte][:value] += byte
-
-  total_line_padding, total_word_padding, total_byte_padding = paddings(total[:line][:value], total[:word][:value], total[:byte][:value])
-
-  total[:line][:padding] = total_line_padding
-  total[:word][:padding] = total_word_padding
-  total[:byte][:padding] = total_byte_padding
+  total[:line] += line
+  total[:word] += word
+  total[:byte] += byte
 end
 
 if is_total_view
-  print total[:line][:value].to_s.rjust(total[:line][:padding])
+  total_line_padding, total_word_padding, total_byte_padding = paddings(total[:line], total[:word], total[:byte])
+
+  print total[:line].to_s.rjust(total_line_padding)
 
   unless params[:l]
-    print total[:word][:value].to_s.rjust(total[:word][:padding])
-    print total[:byte][:value].to_s.rjust(total[:byte][:padding])
+    print total[:word].to_s.rjust(total_word_padding)
+    print total[:byte].to_s.rjust(total_byte_padding)
   end
 
   puts ' total'
