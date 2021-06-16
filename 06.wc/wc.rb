@@ -5,12 +5,6 @@ require 'optparse'
 
 def directory_or_file(name)
   if Dir.exist?(name)
-    if name.end_with?('/')
-      name
-    else
-      "#{name}/"
-    end
-  elsif name.end_with?('/')
     puts "wc: #{name}: Not a directory"
     nil
   elsif File.exist?(name)
