@@ -29,13 +29,6 @@ def paddings(line, word, byte)
   [line_padding, word_padding, byte_padding]
 end
 
-def total_with_padding(total, hash)
-  value = hash.values[0]
-  key = hash.key(value)
-
-  total[key].to_s.rjust(value)
-end
-
 opt = OptionParser.new
 
 params = {}
@@ -102,11 +95,10 @@ end
 if is_total_view
   line, word, byte = paddings(total[:line], total[:word], total[:byte])
 
-  print total_with_padding(total, { line: line })
-
+  print total[:line].to_s.rjust(line)
   unless params[:l]
-    print total_with_padding(total, { word: word })
-    print total_with_padding(total, { byte: byte })
+    print total[:word].to_s.rjust(word)
+    print total[:byte].to_s.rjust(byte)
   end
 
   puts ' total'
