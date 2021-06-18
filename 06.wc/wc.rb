@@ -43,12 +43,11 @@ TEMP_FILE_NAME = "temp_file_#{Time.now.to_i}.txt"
 files = if is_standard_inputs
           lines = readlines
 
-          file = File.open(TEMP_FILE_NAME, 'w') do |f|
+          File.open(TEMP_FILE_NAME, 'w') do |f|
             f.puts(lines)
-            f
           end
 
-          [file]
+          [TEMP_FILE_NAME]
         else
           pattern = ARGV.map { |arg| directory_or_file(arg) }.compact.map { |f| "#{f}*" }
 
@@ -63,14 +62,14 @@ total = {
 
 is_total_view = files.length > 1
 
-files.each do |file_or_filename|
+files.each do |filename|
   line, word, byte = nil
 
-  file = File.open(file_or_filename) do |f|
+  file_path = File.open(filename) do |f|
     line = f.each_line.count
     word = f.read.split.count
     byte = f.size
-    f
+    f.to_path
   end
 
   line_padding, word_padding, byte_padding = paddings(line, word, byte)
@@ -82,7 +81,7 @@ files.each do |file_or_filename|
     print byte.to_s.rjust(byte_padding)
   end
 
-  puts is_standard_inputs ? '' : " #{file.to_path}"
+  puts is_standard_inputs ? '' : " #{file_path}"
 
   # Prepare for total view
   next unless is_total_view
