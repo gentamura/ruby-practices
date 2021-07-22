@@ -10,4 +10,8 @@ class Shot
 
     @mark.to_i
   end
+
+  def ten?
+    score == 10
+  end
 end

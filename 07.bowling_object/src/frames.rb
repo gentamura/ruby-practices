@@ -26,7 +26,7 @@ class Frames
       frame << shot.score
 
       if frames.size < 10
-        if frame.size >= 2 || shot.score == 10
+        if frame.size >= 2 || shot.ten?
           frames << frame.dup
           frame.clear
         end
