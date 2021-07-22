@@ -2,6 +2,7 @@
 
 require_relative './shot'
 require_relative './frame'
+require_relative './frames'
 
 class Game
   def initialize(marks)
@@ -10,7 +11,7 @@ class Game
 
   def start
     frames = parse_marks(@marks)
-    total_score(frames)
+    frames.score
   end
 
   private
@@ -37,40 +38,7 @@ class Game
       end
     end
 
-    frames.map { |f| Frame.new(*f) }
-  end
-
-  def total_score(frames)
-    frames.each_with_index.reduce(0) do |result, (frame, idx)|
-      result + calcurate_score(frame, idx, frames)
-    end
-  end
-
-  def calcurate_score(frame, idx, frames)
-    return frame.score if idx == 9 # 10 frame
-
-    next_frame = next_frame(frames, idx)
-    next_next_frame = next_next_frame(frames, idx)
-
-    next_frame_score = 0
-    next_next_frame_score = 0
-
-    if frame.strike?
-      next_next_frame_score = next_next_frame.first_shot.score if idx.between?(0, 7) && next_frame.strike?
-
-      next_frame_score = next_frame.first_shot.score + next_frame.second_shot.score + next_next_frame_score
-    elsif frame.spare?
-      next_frame_score = next_frame.first_shot.score
-    end
-
-    frame.score + next_frame_score
-  end
-
-  def next_frame(frames, idx)
-    frames[idx + 1]
-  end
-
-  def next_next_frame(frames, idx)
-    frames[idx + 2]
+    frame_objects = frames.map { |f| Frame.new(*f) }
+    Frames.new(frame_objects)
   end
 end
