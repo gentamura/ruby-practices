@@ -1,14 +1,41 @@
 # frozen_string_literal: true
 
 class Frames
-  def initialize(frames)
-    @frames = frames
+  def initialize(marks)
+    @frames = parse_marks(marks)
   end
 
   def score
     @frames.each_with_index.reduce(0) do |result, (frame, idx)|
       result + calcurate_score(frame, idx)
     end
+  end
+
+  private
+
+  def parse_marks(marks)
+    shots = []
+    frames = []
+    frame = []
+
+    marks.each do |m|
+      shots << Shot.new(m)
+    end
+
+    shots.each do |shot|
+      frame << shot.score
+
+      if frames.size < 10
+        if frame.size >= 2 || shot.score == 10
+          frames << frame.dup
+          frame.clear
+        end
+      else # 10 frame
+        frames.last << shot.score
+      end
+    end
+
+    frames.map { |f| Frame.new(*f) }
   end
 
   def calcurate_score(frame, idx)
