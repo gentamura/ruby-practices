@@ -41,21 +41,17 @@ class Frames
   def calcurate_score(frame, idx)
     return frame.score if idx == 9 # 10 frame
 
-    next_frame = next_frame(idx)
-    next_next_frame = next_next_frame(idx)
-
-    next_frame_score = 0
-    next_next_frame_score = 0
-
     if frame.strike?
-      next_next_frame_score = next_next_frame.first_shot.score if idx.between?(0, 7) && next_frame.strike?
-
-      next_frame_score = next_frame.first_shot.score + next_frame.second_shot.score + next_next_frame_score
+      frame.score + next_frame(idx).first_shot.score + next_frame(idx).second_shot.score + next_next_frame_score(idx)
     elsif frame.spare?
-      next_frame_score = next_frame.first_shot.score
+      frame.score + next_frame(idx).first_shot.score
+    else
+      frame.score
     end
+  end
 
-    frame.score + next_frame_score
+  def next_next_frame_score(idx)
+    idx.between?(0, 7) && next_frame(idx).strike? ? next_next_frame(idx).first_shot.score : 0
   end
 
   def next_frame(idx)
