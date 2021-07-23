@@ -16,4 +16,4 @@ opt.parse!(ARGV)
 path = ARGV[0] || '.'
 pathname = Pathname(path)
 
-puts exec_ls(pathname, **params)
+puts Ls::Main.new(pathname, **params).exec

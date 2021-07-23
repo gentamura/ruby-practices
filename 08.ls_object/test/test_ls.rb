@@ -13,7 +13,7 @@ class LsTest < Minitest::Test
       README.md          babel.config.js    config.ru          log                postcss.config.js  test               yarn.lock
     TEXT
 
-    assert_equal expected, exec_ls(TARGET_PATHNAME, window_width: 180)
+    assert_equal expected, Ls::Main.new(TARGET_PATHNAME, window_width: 180).exec
   end
 
   def test_exec_ls_with_window_width80
@@ -26,7 +26,7 @@ class LsTest < Minitest::Test
       babel.config.js    log                test
     TEXT
 
-    assert_equal expected, exec_ls(TARGET_PATHNAME, window_width: 80)
+    assert_equal expected, Ls::Main.new(TARGET_PATHNAME, window_width: 80).exec
   end
 
   def test_exec_ls_with_window_width50
@@ -44,7 +44,7 @@ class LsTest < Minitest::Test
       lib
     TEXT
 
-    assert_equal expected, exec_ls(TARGET_PATHNAME, window_width: 50)
+    assert_equal expected, Ls::Main.new(TARGET_PATHNAME, window_width: 50).exec
   end
 
   def test_exec_ls_with_long
@@ -73,7 +73,7 @@ class LsTest < Minitest::Test
       -rw-r--r--    1 gentamura  staff  306678  7 22 16:31 yarn.lock
     TEXT
 
-    assert_equal expected, exec_ls(TARGET_PATHNAME, window_width: 180, long: true)
+    assert_equal expected, Ls::Main.new(TARGET_PATHNAME, window_width: 180, long: true).exec
   end
 
   def test_exec_ls_with_dot_match
@@ -84,7 +84,7 @@ class LsTest < Minitest::Test
       .git               Gemfile            app                config.ru          node_modules       storage            yarn.lock
     TEXT
 
-    assert_equal expected, exec_ls(TARGET_PATHNAME, window_width: 180, dot_match: true)
+    assert_equal expected, Ls::Main.new(TARGET_PATHNAME, window_width: 180, dot_match: true).exec
   end
 
   def test_exec_ls_with_reverse
@@ -94,7 +94,7 @@ class LsTest < Minitest::Test
       tmp                public             node_modules       db                 bin                Rakefile           Gemfile
     TEXT
 
-    assert_equal expected, exec_ls(TARGET_PATHNAME, window_width: 180, reverse: true)
+    assert_equal expected, Ls::Main.new(TARGET_PATHNAME, window_width: 180, reverse: true).exec
   end
 
   def test_exec_ls_with_long_and_dot_match_and_reverse
@@ -130,6 +130,6 @@ class LsTest < Minitest::Test
       drwxr-xr-x   28 gentamura  staff     896  7 22 16:30 .
     TEXT
 
-    assert_equal expected, exec_ls(TARGET_PATHNAME, window_width: 180, long: true, dot_match: true, reverse: true)
+    assert_equal expected, Ls::Main.new(TARGET_PATHNAME, window_width: 180, long: true, dot_match: true, reverse: true).exec
   end
 end
