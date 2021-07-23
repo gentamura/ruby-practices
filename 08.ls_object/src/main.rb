@@ -30,35 +30,7 @@ module Ls
         @files.sort_by!(&:basename)
       end
 
-      result = []
-
-      if @long
-        result = @files.long
-      else
-        word_padding_size = @files.word_padding_size
-
-        cols = @window_width / word_padding_size
-        rows = (@files.count.to_f / cols).ceil
-
-        files = @files.map(&:basename).each_slice(rows).map do |list|
-          unless list.count == rows
-            (rows - list.count).times do
-              list << ''
-            end
-          end
-
-          list
-        end
-
-        files.transpose.each do |file_list|
-          padded_file_list = file_list.map { |file| file.ljust(word_padding_size) if file.size != 0  }.compact
-          padded_file_list.last.strip!
-          result << padded_file_list.join
-        end
-
-        result
-      end
-
+      result = @long ? @files.long : @files.normal(@window_width)
       result.join("\n")
     end
   end

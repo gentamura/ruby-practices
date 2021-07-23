@@ -42,7 +42,6 @@ module Ls
         total_block_count += fs.blocks
       end
 
-      # puts "total #{total_block_count}"
       result << "total #{total_block_count}"
 
       @files.each do |file|
@@ -51,6 +50,33 @@ module Ls
 
       result
     end
+
+    def normal(window_width)
+      cols = window_width / word_padding_size
+      rows = (@files.count.to_f / cols).ceil
+
+      files = @files.map(&:basename).each_slice(rows).map do |list|
+        unless list.count == rows
+          (rows - list.count).times do
+            list << ''
+          end
+        end
+
+        list
+      end
+
+      result = []
+
+      files.transpose.map do |file_list|
+        padded_file_list = file_list.map { |file| file.ljust(word_padding_size) if file.size != 0  }.compact
+        padded_file_list.last.strip!
+        result << padded_file_list.join
+      end
+
+      result
+    end
+
+    private
 
     def word_padding_size
       @word_padding_size ||= @files.map(&:basename).max_by(&:size).size + PADDING_SIZE
