@@ -9,8 +9,8 @@ require 'io/console/size'
 require_relative './file'
 require_relative './files'
 
-def exec_ls(pathname, window_width: IO.console_size[1], reverse: false, long: false, all: false)
-  flags = if all
+def exec_ls(pathname, window_width: IO.console_size[1], reverse: false, long: false, dot_match: false)
+  flags = if dot_match
             File::FNM_DOTMATCH
           else
             0

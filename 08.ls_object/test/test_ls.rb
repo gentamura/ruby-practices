@@ -76,7 +76,7 @@ class LsTest < Minitest::Test
     assert_equal expected, exec_ls(TARGET_PATHNAME, window_width: 180, long: true)
   end
 
-  def test_exec_ls_with_all
+  def test_exec_ls_with_dot_match
     expected = <<~TEXT.chomp
       .                  .gitattributes     Gemfile.lock       babel.config.js    db                 package.json       test
       ..                 .gitignore         README.md          bin                lib                postcss.config.js  tmp
@@ -84,7 +84,7 @@ class LsTest < Minitest::Test
       .git               Gemfile            app                config.ru          node_modules       storage            yarn.lock
     TEXT
 
-    assert_equal expected, exec_ls(TARGET_PATHNAME, window_width: 180, all: true)
+    assert_equal expected, exec_ls(TARGET_PATHNAME, window_width: 180, dot_match: true)
   end
 
   def test_exec_ls_with_reverse
@@ -97,7 +97,7 @@ class LsTest < Minitest::Test
     assert_equal expected, exec_ls(TARGET_PATHNAME, window_width: 180, reverse: true)
   end
 
-  def test_exec_ls_with_long_and_all_and_reverse
+  def test_exec_ls_with_long_and_dot_match_and_reverse
     expected = <<~TEXT.chomp
       total 704
       -rw-r--r--    1 gentamura  staff  306678  7 22 16:31 yarn.lock
@@ -130,6 +130,6 @@ class LsTest < Minitest::Test
       drwxr-xr-x   28 gentamura  staff     896  7 22 16:30 .
     TEXT
 
-    assert_equal expected, exec_ls(TARGET_PATHNAME, window_width: 180, long: true, all: true, reverse: true)
+    assert_equal expected, exec_ls(TARGET_PATHNAME, window_width: 180, long: true, dot_match: true, reverse: true)
   end
 end
