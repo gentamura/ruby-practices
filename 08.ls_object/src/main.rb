@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require 'optparse'
-require 'pathname'
-require 'date'
-require 'etc'
 require 'io/console/size'
 
 require_relative './file'
