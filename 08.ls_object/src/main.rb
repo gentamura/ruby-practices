@@ -6,6 +6,8 @@ require 'date'
 require 'etc'
 require 'io/console/size'
 
+require_relative './file'
+
 def ftype(octal_str)
   {
     '10' => 'p', # FIFO
@@ -48,11 +50,7 @@ def format_time(time)
   time.strftime(format)
 end
 
-def puts_long_option(value, padding_hash)
-
-end
-
-def long_option(value, result)
+def long_option(files, result)
   padding_hash = {
     nlink: 0,
     user: 0,
@@ -62,8 +60,8 @@ def long_option(value, result)
 
   total_block_count = 0
 
-  value.each do |hash|
-    fs = File.stat(hash[:file])
+  files.each do |file|
+    fs = file.stat
 
     # Set padding count
     padding_hash[:nlink] = fs.nlink.to_s.length if fs.nlink.to_s.length > padding_hash[:nlink]
@@ -78,15 +76,15 @@ def long_option(value, result)
   # puts "total #{total_block_count}"
   result << "total #{total_block_count}"
 
-  value.each do |hash|
-    fs = File.stat(hash[:file])
+  files.each do |file|
+    fs = file.stat
 
     long_list = "#{ftype_and_permission(fs.mode.to_s(8))}  " # ファイルタイプ アクセス権
     long_list += "#{fs.nlink.to_s.rjust(padding_hash[:nlink])} " # ハードリンク数
     long_list += "#{user_name(fs.uid).rjust(padding_hash[:user])}  " # 所有者名
     long_list += "#{group_name(fs.gid).rjust(padding_hash[:group])}  " # グループ名
     long_list += "#{fs.size.to_s.rjust(padding_hash[:size])} " # バイト数
-    long_list += "#{format_time(fs.mtime)} #{hash[:basename]}" # 更新日時（または更新年月日） ファイル名
+    long_list += "#{format_time(fs.mtime)} #{file.basename}" # 更新日時（または更新年月日） ファイル名
 
     # puts result
     result << long_list
@@ -96,41 +94,36 @@ end
 def exec_ls(pathname, window_width: IO.console_size[1], reverse: false, long: false, all: false)
   flags = all ? File::FNM_DOTMATCH : 0
 
-  files = Dir.glob(pathname.join('*'), flags).sort
-  files = files.reverse if reverse
+  file_names = Dir.glob(pathname.join('*'), flags).sort
+  file_names = file_names.reverse if reverse
 
-  file_hash_list = []
   max_file_name_size = 0
 
-  files.each do |file|
-    dirname = File.dirname(file)
-    basename = File.basename(file)
+  files = file_names.map do |f|
+    file = Ls::File.new(f)
 
-    max_file_name_size = basename.size if basename.size > max_file_name_size
+    max_file_name_size = file.basename.size if file.basename.size > max_file_name_size
 
-    file_hash_list << {
-      basename: basename,
-      file: file
-    }
+    file
   end
 
   word_padding_size = max_file_name_size + 2
 
-  file_hash_list = if reverse
-                     file_hash_list.sort_by! { |f| f[:basename] }.reverse
-                   else
-                     file_hash_list.sort_by! { |f| f[:basename] }
-                   end
+  files = if reverse
+            files.sort_by!(&:basename).reverse
+          else
+            files.sort_by!(&:basename)
+          end
 
   result = []
 
   if long
-    long_option(file_hash_list, result)
+    long_option(files, result)
   else
     cols = window_width / word_padding_size
-    rows = (file_hash_list.count.to_f / cols).ceil
+    rows = (files.count.to_f / cols).ceil
 
-    files = file_hash_list.map { |h| h[:basename] }.each_slice(rows).map do |list|
+    files = files.map(&:basename).each_slice(rows).map do |list|
       unless list.count == rows
         (rows - list.count).times do
           list << ''
