@@ -3,7 +3,7 @@
 require 'minitest/autorun'
 require './src/main'
 
-class LsCommandTest < Minitest::Test
+class LsTest < Minitest::Test
   TARGET_PATHNAME = Pathname('test/fixtures/sample-app')
 
   def test_exec_ls_with_window_width180
