@@ -9,14 +9,13 @@ require 'io/console/size'
 require_relative './file'
 require_relative './files'
 
-
 module Ls
   class Main
     def initialize(pathname, window_width: IO.console_size[1], reverse: false, long: false, dot_match: false)
       dot_match_flag = dot_match ? ::File::FNM_DOTMATCH : 0
       file_names = Dir.glob(pathname.join('*'), dot_match_flag)
 
-      @files = Ls::Files.new(file_names.map { |f| Ls::File.new(f) })
+      @files = Ls::Files.new(file_names)
 
       @window_width = window_width
       @reverse = reverse

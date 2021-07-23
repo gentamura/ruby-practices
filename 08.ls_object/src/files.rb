@@ -10,8 +10,8 @@ module Ls
 
     PADDING_SIZE = 2
 
-    def initialize(files)
-      @files = files
+    def initialize(file_names)
+      @files = file_names.map { |f| Ls::File.new(f) }
     end
 
     def long
