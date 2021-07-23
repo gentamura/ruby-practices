@@ -6,17 +6,28 @@ require 'pathname'
 
 require_relative './src/main'
 
-opt = OptionParser.new
+module Ls
+  class Cli
+    def initialize(argv)
+      opt = OptionParser.new
 
-params = { reverse: false, long: false, dot_match: false }
+      params = { reverse: false, long: false, dot_match: false }
 
-opt.on('-r') { |v| params[:reverse] = v }
-opt.on('-l') { |v| params[:long] = v }
-opt.on('-a') { |v| params[:dot_match] = v }
+      opt.on('-r') { |v| params[:reverse] = v }
+      opt.on('-l') { |v| params[:long] = v }
+      opt.on('-a') { |v| params[:dot_match] = v }
 
-opt.parse!(ARGV)
+      opt.parse!(argv)
 
-path = ARGV[0] || '.'
-pathname = Pathname(path)
+      path = argv[0] || '.'
+      pathname = Pathname(path)
+      @main = Ls::Main.new(pathname, **params)
+    end
 
-puts Ls::Main.new(pathname, **params).exec
+    def exec
+      @main.exec
+    end
+  end
+end
+
+puts Ls::Cli.new(ARGV).exec
