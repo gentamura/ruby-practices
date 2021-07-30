@@ -39,7 +39,13 @@ class Frames
     return frame.score if idx == 9 # 10 frame
 
     if frame.strike?
-      frame.score + next_frame(idx).first_shot.score + next_frame(idx).second_shot.score + next_next_frame_score(idx)
+      score = frame.score + next_frame(idx).first_shot.score + next_frame(idx).second_shot.score
+
+      if next_frame_a_strike_unitl_eight_frame?(idx)
+        score += next_next_frame(idx).first_shot.score
+      end
+
+      score
     elsif frame.spare?
       frame.score + next_frame(idx).first_shot.score
     else
@@ -47,8 +53,8 @@ class Frames
     end
   end
 
-  def next_next_frame_score(idx)
-    idx.between?(0, 7) && next_frame(idx).strike? ? next_next_frame(idx).first_shot.score : 0
+  def next_frame_a_strike_unitl_eight_frame?(idx)
+    idx.between?(0, 7) && next_frame(idx).strike?
   end
 
   def next_frame(idx)
