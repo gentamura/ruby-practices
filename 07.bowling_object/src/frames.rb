@@ -14,13 +14,10 @@ class Frames
   private
 
   def parse_marks(marks)
-    shots = []
     frames = []
     frame = []
 
-    marks.each do |m|
-      shots << Shot.new(m)
-    end
+    shots = marks.map { |m| Shot.new(m) }
 
     shots.each do |shot|
       frame << shot.score
